@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'richer',
-    version = '0.1',
+    version = '0.1.1',
     description = 'Table renderer for dataclass',
     author = 'sarojaba',
     author_email = 'sarojaba@gmail.com',
