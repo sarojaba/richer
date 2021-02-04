@@ -1,5 +1,5 @@
 from datetime import datetime
-from dataclasses import dataclass, is_dataclass, Field, fields
+from dataclasses import dataclass, is_dataclass, Field, fields, field
 from typing import Any, List
 
 from rich import box
@@ -13,7 +13,8 @@ def style(text: str):
 @dataclass
 class Column:
     name: str
-    justify: str
+    justify: str = None
+    order: str = None
 
 
 def column(field: Field) -> Column:
@@ -55,49 +56,46 @@ class Sort:
 @dataclass
 class ListRenderer:
     items: List
-    sort: Sort = None
     inner: bool = False
+    columns: List[Column] = field(default_factory=list)
 
     def __rich__(self) -> Table:
         show_edge = not self.inner
-        __table = Table(box=box.SQUARE, show_edge=show_edge, show_lines=True)
+        __table = Table(box=box.SQUARE, show_edge=show_edge, show_lines=False)
 
-        colums = [column(f) for f in fields(self.items[0])]
-        colum_names = [c.name for c in colums]
+        # Sort
+        sorted_items = self.items[:]
+        for c in self.columns[::-1]:  # Rewind
+            if c.order is not None:
+                def key(it): return getattr(it, c.name)
+                reverse = c.order == 'desc'
+                sorted_items.sort(key=key, reverse=reverse)                
 
-        if self.sort:
-            # Sort
-            if self.sort.key in colum_names:
-                def key(it): return getattr(it, self.sort.key)
-                reverse = self.sort.order == 'desc'
-                sorted_items = sorted(self.items, key=key, reverse=reverse)
+        columns = [column(f) for f in fields(self.items[0])]
+        column_names = [c.name for c in columns]
+
+        orders = {c.name: c.order for c in self.columns}
+        justifies = {c.name: c.justify for c in self.columns}
+
+        for c in columns:
+            order = orders.get(c.name)
+            if order:
+                # Colum headers
+                reverse = c.order == 'desc'
+                arrow = '🢓' if reverse else '🢑'
+                max_length = max([len(cell(getattr(it, c.name)))
+                                    for it in sorted_items])
+                blank_length = max(
+                    max_length - (len(c.name) + len(arrow)), 1)
+                column_name = c.name + (' ' * blank_length) + arrow
             else:
-                sorted_items = self.items
-
-            # Colum headers
-            for c in colums:
-                if self.sort.key == c.name:
-                    arrow = '🢓' if reverse else '🢑'
-                    max_length = max([len(cell(getattr(it, self.sort.key)))
-                                      for it in sorted_items])
-                    blank_length = max(
-                        max_length - (len(c.name) + len(arrow)), 1)
-                    column_name = c.name + (' ' * blank_length) + arrow
-                else:
-                    column_name = c.name
-
-                __table.add_column(style(column_name), justify=c.justify)
-        else:
-            sorted_items = self.items
-
-            # Colum headers
-            for c in colums:
                 column_name = c.name
-                __table.add_column(style(column_name), justify=c.justify)
+
+            __table.add_column(style(column_name), justify=justifies.get(c.name, c.justify))
 
         # Rows
         for it in sorted_items:
-            values = [cell(getattr(it, cn)) for cn in colum_names]
+            values = [cell(getattr(it, cn)) for cn in column_names]
             __table.add_row(*values)
 
         return __table

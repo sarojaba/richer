@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'richer',
-    version = '0.1.1',
+    version = '0.1.2',
     description = 'Table renderer for dataclass',
     author = 'sarojaba',
     author_email = 'sarojaba@gmail.com',
     url = 'https://github.com/sarojaba/richer',
-    download_url = 'https://github.com/',
+    download_url = 'https://github.com/sarojaba/richer',
     install_requires = ['rich'],
     packages = find_packages(exclude = []),
     keywords = ['table'],
