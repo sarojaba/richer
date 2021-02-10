@@ -4,51 +4,69 @@ Table renderer for dataclass
 
 ## Example
 
+### List
+
 ```python3
-from datetime import datetime
 from dataclasses import dataclass
-from typing import List
+from datetime import datetime
 
-from richer.richer import PropertyRenderer, ListRenderer, Sort
-
-
-@dataclass
-class Inner:
-    id: int
-    name: str
+from rich.console import Console
+from richer.table import ListTable
 
 
 @dataclass
-class Row:
-    id: int
+class Project:
     name: str
-    price: int
-    desc: str
-    now: datetime
-    inners: List[Inner]
-    inner: Inner
+    star_count: int
+    start_date: datetime
 
 
-if __name__ == '__main__':
-    from rich.console import Console
+items = [
+    Project('Vue', 156110, datetime.fromisoformat('2013-07-29T00:00:00')),
+    Project('React', 142857, datetime.fromisoformat('2013-05-25T00:00:00')),
+]
 
-    item0 = Row(9999, 'bear', 300,
-                'abcdeabcdeabcdeabcdeabcde',
-                datetime.today(),
-                [Inner(0, 'white'), Inner(1, 'black')],
-                Inner(0, 'white'))
-
-    item1 = Row(1, 'apple', 200,
-                '',
-                datetime.today(),
-                [Inner(0, 'white'), Inner(1, 'black')],
-                Inner(0, 'white'))
-
-    items = [item0, item1]
-
-    console = Console()
-    console.print(PropertyRenderer(item0))
-    console.print(ListRenderer(items, Sort('name', 'desc')))
+console = Console()
+console.print(ListTable(items))
 ```
 
-sarojaba@gmail.com
+```
+┌───────┬────────────┬─────────────────────┐
+│ NAME  │ STAR COUNT │ START DATE          │
+├───────┼────────────┼─────────────────────┤
+│ Vue   │    156,110 │ 2013-07-29 00:00:00 │
+│ React │    142,857 │ 2013-05-25 00:00:00 │
+└───────┴────────────┴─────────────────────┘
+```
+
+### Property
+```python3
+from dataclasses import dataclass
+from datetime import datetime
+
+from rich.console import Console
+from richer.table import PropertyTable
+
+
+@dataclass
+class Project:
+    name: str
+    star_count: int
+    start_date: datetime
+
+
+item = Project('Vue', 156110, datetime.fromisoformat('2013-07-29T00:00:00'))
+
+console = Console()
+console.print(PropertyTable(item))
+```
+
+```
+┌────────────┬─────────────────────┐
+│ NAME       │ Vue                 │
+├────────────┼─────────────────────┤
+│ STAR COUNT │ 156,110             │
+├────────────┼─────────────────────┤
+│ START DATE │ 2013-07-29 00:00:00 │
+└────────────┴─────────────────────┘
+```

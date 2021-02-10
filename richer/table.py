@@ -1,13 +1,9 @@
 from datetime import datetime
-from dataclasses import dataclass, is_dataclass, Field, fields, field
+from dataclasses import dataclass, is_dataclass, Field, field, fields
 from typing import Any, List
 
 from rich import box
 from rich.table import Table
-
-
-def style(text: str):
-    return f'[bold]{text.upper()}[/bold]'
 
 
 @dataclass
@@ -24,6 +20,10 @@ def column(field: Field) -> Column:
         justify = 'left'
 
     return Column(field.name, justify)
+
+
+def style(text: str):
+    return f"[bold]{text.upper().replace('_', ' ')}[/bold]"
 
 
 def cell(value):
@@ -48,14 +48,9 @@ def cell(value):
 
 
 @dataclass
-class Sort:
-    key: str
-    order: str
-
-
-@dataclass
-class ListRenderer:
+class ListTable:
     items: List
+    index: bool = False
     inner: bool = False
     columns: List[Column] = field(default_factory=list)
 
@@ -69,13 +64,17 @@ class ListRenderer:
             if c.order is not None:
                 def key(it): return getattr(it, c.name)
                 reverse = c.order == 'desc'
-                sorted_items.sort(key=key, reverse=reverse)                
+                sorted_items.sort(key=key, reverse=reverse)
 
         columns = [column(f) for f in fields(self.items[0])]
         column_names = [c.name for c in columns]
 
         orders = {c.name: c.order for c in self.columns}
         justifies = {c.name: c.justify for c in self.columns}
+
+        # Index Column
+        if self.index:
+            __table.add_column('INDEX', justify='right')
 
         for c in columns:
             order = orders.get(c.name)
@@ -84,31 +83,36 @@ class ListRenderer:
                 reverse = c.order == 'desc'
                 arrow = '🢓' if reverse else '🢑'
                 max_length = max([len(cell(getattr(it, c.name)))
-                                    for it in sorted_items])
+                                  for it in sorted_items])
                 blank_length = max(
                     max_length - (len(c.name) + len(arrow)), 1)
                 column_name = c.name + (' ' * blank_length) + arrow
             else:
                 column_name = c.name
 
-            __table.add_column(style(column_name), justify=justifies.get(c.name, c.justify))
+            __table.add_column(style(column_name),
+                               justify=justifies.get(c.name, c.justify))
 
         # Rows
-        for it in sorted_items:
+        for i, it in enumerate(sorted_items):
             values = [cell(getattr(it, cn)) for cn in column_names]
-            __table.add_row(*values)
+            if self.index:
+                __table.add_row(str(i), *values)
+            else:
+                __table.add_row(*values)
 
         return __table
 
 
 @dataclass
-class PropertyRenderer:
+class PropertyTable:
     item: Any
     inner: bool = False
 
     def __rich__(self) -> Table:
         show_edge = not self.inner
-        __table = Table(box=box.SQUARE, show_edge=show_edge, show_header=False, show_lines=True)
+        __table = Table(box=box.SQUARE, show_edge=show_edge,
+                        show_header=False, show_lines=True)
 
         for f in fields(self.item):
             __table.add_row(style(f.name), cell(getattr(self.item, f.name)))
