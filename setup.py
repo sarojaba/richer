@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'richer',
-    version = '0.1.3',
-    description = 'Table renderer for dataclass',
+    version = '0.1.4',
+    description = 'Table renderer for dataclass using Rich',
     author = 'sarojaba',
     author_email = 'sarojaba@gmail.com',
     url = 'https://github.com/sarojaba/richer',

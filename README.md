@@ -30,16 +30,13 @@ console = Console()
 console.print(ListTable(items))
 ```
 
-```
-┌───────┬────────────┬─────────────────────┐
-│ NAME  │ STAR COUNT │ START DATE          │
-├───────┼────────────┼─────────────────────┤
-│ Vue   │    156,110 │ 2013-07-29 00:00:00 │
-│ React │    142,857 │ 2013-05-25 00:00:00 │
-└───────┴────────────┴─────────────────────┘
-```
+| **NAME**  │ **STAR COUNT** │ **START DATE**      │
+| --------- | -------------- | ------------------- |
+│ Vue       │        156,110 │ 2013-07-29 00:00:00 │
+│ React     │        142,857 │ 2013-05-25 00:00:00 │
 
 ### Property
+
 ```python3
 from dataclasses import dataclass
 from datetime import datetime
@@ -61,12 +58,24 @@ console = Console()
 console.print(PropertyTable(item))
 ```
 
-```
-┌────────────┬─────────────────────┐
-│ NAME       │ Vue                 │
-├────────────┼─────────────────────┤
-│ STAR COUNT │ 156,110             │
-├────────────┼─────────────────────┤
-│ START DATE │ 2013-07-29 00:00:00 │
-└────────────┴─────────────────────┘
+│ **NAME**       │ Vue                 │
+│ **STAR COUNT** │ 156,110             │
+│ **START DATE** │ 2013-07-29 00:00:00 │
+
+### Pagination
+
+```python3
+from dataclasses import dataclass
+
+from richer.interactive_console import InteractiveConsole
+
+
+@dataclass
+class Row:
+    id: int
+
+items = [Row(r) for r in range(0, 100)]
+
+console = InteractiveConsole(items)
+console.print()
 ```
