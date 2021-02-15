@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from rich.console import Console
-from richer.table import ListTable
+from richer.table import Column, ListTable
 
 
 @dataclass
@@ -18,5 +18,13 @@ items = [
     Project('Angular', 57004, datetime.fromisoformat('2014-09-19T00:00:00'))
 ]
 
+table = ListTable(
+    items,
+    columns=[
+        Column(name='star_count', order='asc', justify='right'),
+        Column(name='start_date', visible=False)
+    ]
+)
+
 console = Console()
-console.print(ListTable(items))
+console.print(table)

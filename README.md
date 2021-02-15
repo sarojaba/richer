@@ -22,7 +22,8 @@ class Project:
 
 items = [
     Project('Vue', 156110, datetime.fromisoformat('2013-07-29T00:00:00')),
-    Project('React', 142857, datetime.fromisoformat('2013-05-25T00:00:00'))
+    Project('React', 142857, datetime.fromisoformat('2013-05-25T00:00:00')),
+    Project('Angular', 57004, datetime.fromisoformat('2014-09-19T00:00:00'))
 ]
 
 console = Console()
@@ -30,12 +31,49 @@ console.print(ListTable(items))
 ```
 
 ```
-┌───────┬────────────┬─────────────────────┐
-│ NAME  │ STAR COUNT │ START DATE          │
-├───────┼────────────┼─────────────────────┤
-│ Vue   │    156,110 │ 2013-07-29 00:00:00 │
-│ React │    142,857 │ 2013-05-25 00:00:00 │
-└───────┴────────────┴─────────────────────┘
+┌─────────┬────────────┬─────────────────────┐
+│ NAME    │ STAR COUNT │ START DATE          │
+├─────────┼────────────┼─────────────────────┤
+│ Vue     │    156,110 │ 2013-07-29 00:00:00 │
+│ React   │    142,857 │ 2013-05-25 00:00:00 │
+│ Angular │     57,004 │ 2014-09-19 00:00:00 │
+└─────────┴────────────┴─────────────────────┘
+```
+
+### Column Manipulations
+
+Display a table with custom columns
+
+- Justify
+- Sort
+- Hide/Show
+
+[1-1_column_manipulation.py](example/1-1_column_manipulation.py)
+
+```python3
+from rich.console import Console
+from richer.table import Column, ListTable
+
+table = ListTable(
+    items,
+    columns=[
+        Column(name='star_count', order='asc', justify='right'),
+        Column(name='start_date', visible=False)
+    ]
+)
+
+console = Console()
+console.print(table)
+```
+
+```
+┌─────────┬──────────────┐
+│ NAME    │ STAR COUNT ▲ │
+├─────────┼──────────────┤
+│ Angular │       57,004 │
+│ React   │      142,857 │
+│ Vue     │      156,110 │
+└─────────┴──────────────┘
 ```
 
 ### Property Table
@@ -45,10 +83,8 @@ Display table from a dataclass
 [2_property_table.py](example/2_property_table.py)
 
 ```python3
-from rich.console import Console
 from richer.table import PropertyTable
 
-console = Console()
 console.print(PropertyTable(item[0]))
 ```
 
@@ -93,7 +129,6 @@ item = Project(
     tags
 )
 
-console = Console()
 console.print(PropertyTable(item))
 ```
 
@@ -169,4 +204,4 @@ text = '\x1b[1;32mSuccess\x1b[0m\n\x1b[1;31mFailure\x1b[0m'
 console.print(AnsiEscapeText(text))
 ```
 
-<div class="blockquote"><span style="color:green;">Success</span><br/><span style="color:red;">Failure</span></div>
+<span style="color:green;">Success</span><br/><span style="color:red;">Failure</span>

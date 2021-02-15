@@ -11,6 +11,7 @@ class Column:
     name: str
     justify: str = None
     order: str = None
+    visible: bool = True
 
 
 def column(field: Field) -> Column:
@@ -71,6 +72,7 @@ class ListTable:
 
         orders = {c.name: c.order for c in self.columns}
         justifies = {c.name: c.justify for c in self.columns}
+        visibles = {c.name: c.visible for c in self.columns}
 
         # Index Column
         if self.index:
@@ -81,7 +83,7 @@ class ListTable:
             if order:
                 # Colum headers
                 reverse = c.order == 'desc'
-                arrow = '🢓' if reverse else '🢑'
+                arrow = '▼' if reverse else '▲'
                 max_length = max([len(cell(getattr(it, c.name)))
                                   for it in sorted_items])
                 blank_length = max(
@@ -90,12 +92,14 @@ class ListTable:
             else:
                 column_name = c.name
 
-            __table.add_column(style(column_name),
-                               justify=justifies.get(c.name, c.justify))
+            if visibles.get(c.name, True):
+                __table.add_column(style(column_name),
+                                   justify=justifies.get(c.name, c.justify))
 
         # Rows
         for i, it in enumerate(sorted_items):
-            values = [cell(getattr(it, cn)) for cn in column_names]
+            values = [cell(getattr(it, cn))
+                      for cn in column_names if visibles.get(cn, True)]
             if self.index:
                 __table.add_row(str(i), *values)
             else:
