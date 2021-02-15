@@ -152,3 +152,21 @@ console.print()
 │ 10 │
 └────┘
 ```
+
+### ANSI Escape Text
+
+Display ANSI Escape Text
+
+It is useful to use rich by redirecting stdout and stderr
+
+[5_ansi_escape_text.py](example/5_ansi_escape_text.py)
+
+```python3
+from richer.text import AnsiEscapeText
+
+console = Console()
+text = '\x1b[1;32mSuccess\x1b[0m\n\x1b[1;31mFailure\x1b[0m'
+console.print(AnsiEscapeText(text))
+```
+
+<div class="blockquote"><span style="color:green;">Success</span><br/><span style="color:red;">Failure</span></div>

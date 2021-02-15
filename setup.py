@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'richer',
-    version = '0.1.4',
+    version = '0.1.5',
     description = 'Table renderer for dataclass using Rich',
     author = 'sarojaba',
     author_email = 'sarojaba@gmail.com',

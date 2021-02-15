@@ -64,11 +64,10 @@ class InteractiveConsole:
             # Print on buffer
             with console.capture() as capture:
                 console.print(ListTable(items))
-                # console.print("[bold red]Hello\nWorld[/]")
             output = capture.get()
 
-            from richer.text import parse
-            tokens = parse(output)
+            from richer.text import AnsiEscapeText
+            tokens = AnsiEscapeText(output).tokens
 
             for t in tokens:
                 mode = curses.A_NORMAL
