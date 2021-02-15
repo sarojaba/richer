@@ -40,9 +40,9 @@ def cell(value):
     elif isinstance(value, Table):
         return value
     elif isinstance(value, List):
-        return ListRenderer(value, inner=True)
+        return ListTable(value, inner=True)
     elif is_dataclass(value):
-        return PropertyRenderer(value, inner=True)
+        return PropertyTable(value, inner=True)
     else:
         return value
 

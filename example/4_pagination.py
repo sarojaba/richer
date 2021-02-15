@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from richer.interactive_console import InteractiveConsole
+from richer.console import InteractiveConsole
 
 
 @dataclass
